@@ -53,6 +53,25 @@ class User(AbstractBaseUser):
     def __str__(self):
         return self.email
     
+class Profile(models.Model):
+    user = models.OneToOneField(get_user_model(), on_delete=models.CASCADE, related_name='profile')
+    otp = models.CharField(max_length=6, blank=True, null=True)
+
+    def __str__(self):
+        return self.user.email
+    
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
+    
+
+
+    
     
 
 

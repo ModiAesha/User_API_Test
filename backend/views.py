@@ -16,23 +16,17 @@ from rest_framework import status
 from rest_framework import generics
 
 class SignupView(APIView):
-    permission_classes = [AllowAny]
+      permission_classes = [AllowAny] 
+ 
+      def post(self, request):
+         serializer = SignupSerializer(data=request.data)
+         if serializer.is_valid():
+            user = serializer.save()
+            
 
-    def post(self, request):
-        serializer = SignupSerializer(data=request.data)
-        if serializer.is_valid():
-              user = serializer.save()
-             
-              user.profile.save()
-
-              send_mail(
-                 
-                  [user.email],
-                  fail_silently=False,
-              )
-
-              return Response({'message': 'User created successfully.'}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            
+            return Response({'message': 'User created successfully.'}, status=status.HTTP_201_CREATED)
+         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ProfileDetailView(generics.RetrieveAPIView):
     serializer_class = ProfileSerializer
@@ -64,21 +58,44 @@ class ForgotPasswordView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request):
-        email = request.data.get('email')
-        user = User.objects.filter(email=email).first()
-        if user:
-            otp = get_random_string(length=6, allowed_chars='0123456789')
-            user.profile.otp = otp
-            user.profile.save()
-            send_mail(
-                'Reset Password OTP',
-                f'Your OTP code is {otp}',
-                'from@example.com',
-                [user.email],
-                fail_silently=False,
-            )
-            return Response({'message': 'OTP sent to email'}, status=status.HTTP_200_OK)
-        return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            email = request.data.get('email')
+            if not email:
+                return Response({'error': 'Email is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+            user = User.objects.filter(email=email).first()
+            if user:
+                
+                if not hasattr(user, 'profile'):
+                    return Response({'error': 'User profile not found'}, status=status.HTTP_400_BAD_REQUEST)
+                
+                
+                otp = get_random_string(length=6, allowed_chars='0123456789')
+                user.profile.otp = otp
+                user.profile.save()
+                
+               
+                try:
+                    send_mail(
+                        'Reset Password OTP',
+                        f'Your OTP code is {otp}',
+                        'from@example.com', 
+                        [user.email],
+                        fail_silently=False,
+                    )
+                    return Response({'message': 'OTP sent to email'}, status=status.HTTP_200_OK)
+                except Exception as e:
+                    
+                    print(f"Error sending email: {e}")
+                    return Response({'error': 'Failed to send OTP email. Please try again later.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            
+            return Response({'error': 'User not found'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        except Exception as e:
+        
+            print(f"Error in ForgotPasswordView: {e}")
+            return Response({'error': 'An internal error occurred. Please try again later.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class ResetPasswordView(APIView):
     permission_classes = [AllowAny]

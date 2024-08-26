@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { signupUser } from '../services/api';
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -12,7 +11,9 @@ const Signup = () => {
     address: '',
     password: ''
   });
+
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState(''); 
 
   const handleChange = (e) => {
     setFormData({
@@ -32,12 +33,12 @@ const Signup = () => {
     console.log('Form Data:', formData);
 
     try {
-      
       const response = await axios.post('http://localhost:8000/api/signup/', formData, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
+      
       console.log('Signup successful', response.data);
       
       setFormData({
@@ -49,17 +50,22 @@ const Signup = () => {
         address: '',
         password: ''
       });
+      
       setError(''); 
+      setSuccessMessage('Signup successful!'); 
+
     } catch (error) {
       console.error('Error during signup:', error.response?.data || error.message);
       setError(error.response?.data?.detail || 'An error occurred during signup.');
-    }
+      setSuccessMessage(''); 
+        }
   };
 
   return (
     <div>
       <h2>Sign Up</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
+      {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>} 
       <form onSubmit={handleSubmit}>
         <div>
           <label>Name:</label>
@@ -135,3 +141,4 @@ const Signup = () => {
 };
 
 export default Signup;
+
