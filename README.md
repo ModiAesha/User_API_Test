@@ -44,7 +44,7 @@ for APIs In urls.py,define API endpoints
 -npm install react-dom
 
 
-### Create components folder inside the srs and all the java script file. 
+### Create components folder inside the src and all the java script files. 
 -signup.js(name, email, dob, address, mobile, gender, password, )
 
 -login.js 
