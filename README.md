@@ -8,11 +8,21 @@
 -python manage.py startapp backend
 
 ### Install required packages: 
--pip install djangorestframework django-otp
+-pip install djangorestframework 
 
-In /models.py, define the User model In serializers.py,
-create serializers for the User mode In views.py, 
-the views for APIs In urls.py, define API endpoints
+-pip install mysqlclient
+
+-pip install djangorestframework-simplejwt
+
+
+### Python files: 
+In /models.py, define the User model.
+
+In serializers.py create serializers for the User models
+
+In views.py, the views are created
+
+for APIs In urls.py,define API endpoints
 
 ### Run This commands: 
 -python manage.py makemigrations 
@@ -31,8 +41,11 @@ the views for APIs In urls.py, define API endpoints
 ### Install HTTP requests: 
 -npm install axios
 
+-npm install react-dom
+
+
 ### Create components folder inside the srs and all the java script file. 
--signup.js
+-signup.js(name, email, dob, address, mobile, gender, password, )
 
 -login.js 
 
