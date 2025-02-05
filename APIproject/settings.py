@@ -128,11 +128,7 @@ DATABASES = {
 
 AUTH_USER_MODEL='backend.User'
 
-EMAIL_HOST='smtp.gmail.com'
-EMAIL_HOST_USER='aesham198@gmail.com'
-EMAIL_HOST_PASSWORD='kxwybcnmtstqnsac' 
-EMAIL_PORT=587
-EMAIL_USE_TLS=True
+
 
 
 # Password validation
